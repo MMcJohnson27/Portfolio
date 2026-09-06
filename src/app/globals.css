@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --frame-gap: 9px;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  /* One ground for the whole document. No pattern, no per-section fills —
+     structure comes from rules, not from background changes. */
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  ::selection {
+    @apply bg-paper-edge text-ink;
+  }
+
+  /* The one place the accent appears outside the hero: a focus ring is an
+     affordance, not decoration, and it has to be unmistakable. */
+  :focus-visible {
+    outline: 1px solid theme("colors.clay.DEFAULT");
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------
+     THE FRAME SYSTEM
+     The structural signature of the whole site: an outer hairline,
+     a paper matte, and an inner hairline around the content. Every
+     image, button and plate uses it, so the page reads as one object.
+     --------------------------------------------------------------- */
+  .frame {
+    @apply relative border border-rule bg-paper-deep;
+    padding: var(--frame-gap);
+  }
+
+  .frame-inner {
+    @apply relative h-full w-full border border-rule bg-paper;
+  }
+
+  /* ---------------------------------------------------------------
+     THE SLOT
+     A blank visual placeholder. At this fidelity it is most of what
+     the page shows, so it has to read as *deliberate*: a hatched matte
+     on the same hairline as everything else, never a grey box.
+     --------------------------------------------------------------- */
+  .slot {
+    @apply relative overflow-hidden bg-paper-deep;
+    background-image: repeating-linear-gradient(
+      45deg,
+      theme("colors.rule.DEFAULT") 0 1px,
+      transparent 1px 16px
+    );
+  }
+
+  /* Mono label — the technical voice. */
+  .label {
+    @apply font-mono text-label uppercase text-ink-mute;
+  }
+
+  /* Hairline that draws in from the left on hover. */
+  .rule-draw {
+    @apply relative;
+  }
+  .rule-draw::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-ink;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rule-draw:hover::after,
+  .rule-draw[data-active="true"]::after {
+    @apply scale-x-100;
+  }
+}
+
+@layer utilities {
+  /* The rail carries its own progress bar and transport, so the native
+     scrollbar is redundant chrome across the bottom of the cards. */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
